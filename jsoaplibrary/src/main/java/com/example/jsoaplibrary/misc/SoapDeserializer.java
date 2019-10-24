@@ -180,12 +180,12 @@ public class SoapDeserializer {
         Class cl = f.getType().getComponentType();
         try {
             if (sObj!=null) {
-                int count = sObj.getPropertyCount();
+                int count = ((SoapObject)sObj.getProperty(f.getName())).getPropertyCount();
                 if (count>0) {
                     Object array = Array.newInstance(cl, count);
                     for (int i=0; i<count; i++) {
                         Object o = cl.newInstance();
-                        o = fromSoapObject(o,cl,(SoapObject) sObj.getProperty(i));
+                        o = fromSoapObject(o,cl,(SoapObject)((SoapObject)sObj.getProperty(f.getName())).getProperty(i));
                         Array.set(array, i, o);
 
                     }
