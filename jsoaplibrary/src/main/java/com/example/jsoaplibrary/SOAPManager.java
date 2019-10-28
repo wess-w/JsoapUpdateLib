@@ -86,23 +86,23 @@ public class SOAPManager {
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                    callback.onError(JsoapError.NETWORK_ERROR);
+                    return JsoapError.NETWORK_ERROR;
                 } catch (XmlPullParserException e) {
                     e.printStackTrace();
-                    callback.onError(JsoapError.PARSE_ERROR);
+                    return JsoapError.PARSE_ERROR;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    callback.onError(JsoapError.OTHER_ERROR);
+                    return JsoapError.OTHER_ERROR;
                 }
 
-                return null;
+               
             }
 
             @Override
             protected void onPostExecute(Object reslt) {
                 try {
                     if (reslt == null) {
-                        callback.onSuccess((SoapObject) null);
+                        callback.onError(JsoapError.OTHER_ERROR);
                     } else {
                         if (reslt.toString().equals("")) {
                             Log.e(TAG, "The " + methodName + " webservice returned empty");
@@ -141,7 +141,10 @@ public class SOAPManager {
                                 Log.e(TAG, "The " + methodName + " webservice returns a primitive object, but you didn't specify a valid primitive output class.");
                                 callback.onError(JsoapError.OTHER_ERROR);
                             }
-                        } else {
+                        }
+                        else if ((int)reslt == JsoapError.NETWORK_ERROR ||(int) reslt == JsoapError.PARSE_ERROR ||(int) reslt == JsoapError.OTHER_ERROR)
+                            callback.onError((int) reslt); 
+                        else {
                             callback.onError(JsoapError.OTHER_ERROR);
                         }
                     }
